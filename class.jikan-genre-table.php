@@ -31,7 +31,7 @@ class GenreTable extends WP_List_Table
     }
     function column_url($item)
     {
-        return "<a href=''>{$item['url']}</a>";
+        return "<a href='{$item['url']}' target='_blank'>{$item['url']}</a>";
     }
     function prepare_items()
     {

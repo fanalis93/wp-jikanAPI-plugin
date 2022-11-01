@@ -19,26 +19,63 @@ class JikanGenre  {
             return false;
         }
 
-//        $ids = [];
-//        $names = [];
-//        $counts = [];
-//        $urls = [];
-//        foreach($results as $data) {
-//            $ids[] = $data->mal_id;
-//            $names[] = $data->name;
-//            $counts[] = $data->count;
-//            $urls[] = $data->url;
-//        }
-//        $genredata = [];
-//        array_push($genredata, $ids,$names,$urls,$counts);
         return $results;
+    }
+    function datatable_search_by_name( $item ) {
+        $name        = strtolower( $item['name'] );
+        $search_name = sanitize_text_field( $_GET['s'] );
+        if ( strpos( $name, $search_name ) !== false ) {
+            return true;
+        }
+
+        return false;
     }
     public function jikan_genres_content()
     {
         $genredata = $this->get_genre_data();
-        $array = json_decode(json_encode($genredata), true);
+        $data = json_decode(json_encode($genredata), true);
         $table = new GenreTable();
-        $table->set_data( $array );
+
+
+        $orderby = $_REQUEST['orderby'] ?? '';
+        $order   = $_REQUEST['order'] ?? '';
+
+        if ( 'mal_id' == $orderby ) {
+            if ( 'asc' == $order ) {
+                usort( $data, function ( $item1, $item2 ) {
+                    return $item2['mal_id'] <=> $item1['mal_id'];
+                } );
+            } else {
+                usort( $data, function ( $item1, $item2 ) {
+                    return $item1['mal_id'] <=> $item2['mal_id'];
+                } );
+            }
+        } else if ( 'name' == $orderby ) {
+            if ( 'asc' == $order ) {
+                usort( $data, function ( $item1, $item2 ) {
+                    return $item2['name'] <=> $item1['name'];
+                } );
+            } else {
+                usort( $data, function ( $item1, $item2 ) {
+                    return $item1['name'] <=> $item2['name'];
+                } );
+            }
+        } else if ( 'count' == $orderby ) {
+            if ( 'asc' == $order ) {
+                usort( $data, function ( $item1, $item2 ) {
+                    return $item2['count'] <=> $item1['count'];
+                } );
+            } else {
+                usort( $data, function ( $item1, $item2 ) {
+                    return $item1['count'] <=> $item2['count'];
+                } );
+            }
+        }
+        if ( isset( $_GET['s'] ) && !empty($_GET['s']) ) {
+            $data = array_filter( $data, 'datatable_search_by_name' );
+        }
+
+        $table->set_data( $data );
 
         $table->prepare_items();
         ?>
@@ -46,6 +83,7 @@ class JikanGenre  {
             <h2><?php _e( "Genres", "jikan" ); ?></h2>
             <form method="GET">
                 <?php
+                $table->search_box( 'search', 'search_id' );
                 $table->display();
                 ?>
                 <input type="hidden" name="page" value="<?php echo $_REQUEST['page']; ?>">
@@ -53,5 +91,6 @@ class JikanGenre  {
         </div>
         <?php
     }
+
 
 }

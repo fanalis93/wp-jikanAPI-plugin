@@ -137,7 +137,7 @@ class JikanAnime  {
 
                 </div>
             </div>
-            <div class="customHr">.</div>
+<!--            <div class="customHr">.</div>-->
 
         <?php } ?>
         <?php
