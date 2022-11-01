@@ -28,16 +28,8 @@ class JikanAPI
     {
 
         add_action('plugins_loaded', array($this, 'load_textdomain'));
-        add_action('admin_enqueue_scripts', function ($hook) {
-            if ("toplevel_page_jikan-animes" == $hook) {
-                wp_enqueue_style('jikan-style', plugin_dir_url(__FILE__) . 'assets/css/style.css');
-                wp_enqueue_script('jikan-js', plugin_dir_url(__FILE__) . 'assets/js/main.js', array('jquery'), '1.1.1', true);
-            }
-        });
-        add_action( 'wp_enqueue_scripts', 'wpdocs_theme_name_scripts' );
 
         add_action( 'admin_menu', array( $this, 'jikan_create_settings' ) );
-        add_action('admin_menu', array($this, 'wpdocs_register_my_custom_submenu_page'),99);
 
     }
 
@@ -47,7 +39,7 @@ class JikanAPI
     }
     function jikan_create_settings()
     {
-        add_menu_page(
+        $main = add_menu_page(
             __('Jikan Fetch Anime', 'jikan'),
             __('Jikan Fetch Anime', 'jikan'),
             'manage_options',
@@ -55,11 +47,7 @@ class JikanAPI
             array($this,'jikan_settings_callback'),
             'dashicons-store',
             110);
-
-    }
-
-    function wpdocs_register_my_custom_submenu_page() {
-        add_submenu_page(
+        $genre = add_submenu_page(
             'jikan-animes',
             __('All Genres', 'jikan'),
             __('All Genres', 'jikan'),
@@ -67,7 +55,7 @@ class JikanAPI
             'jikan-genres',
             array($this,'jikan_genres_callback')
         );
-        add_submenu_page(
+        $user = add_submenu_page(
             'jikan-animes',
             __('Fetch User', 'jikan'),
             __('Fetch User', 'jikan'),
@@ -75,6 +63,39 @@ class JikanAPI
             'jikan-user',
             array($this,'jikan_user_callback')
         );
+        foreach(array($main,$genre,$user) as $slug) {
+            // make sure the style callback is used on our page only
+            add_action(
+                "admin_print_styles-$slug",
+                array($this,'enqueue_style')
+            );
+
+            // make sure the script callback is used on our page only
+            add_action(
+                "admin_print_scripts-$slug",
+                array ( $this, 'enqueue_script' )
+            );
+        }
+
+    }
+    public static function enqueue_style()
+    {
+        wp_register_style(
+            'jikan-style',
+            plugins_url( 'assets/css/style.css', __FILE__ )
+        );
+        wp_enqueue_style( 'jikan-style' );
+    }
+    public static function enqueue_script()
+    {
+        wp_register_script(
+            'jikan-script',
+            plugins_url( 'assets/js/main.js', __FILE__ ),
+            array(),
+            FALSE,
+            TRUE
+        );
+        wp_enqueue_script( 'jikan-script' );
     }
 
     function jikan_settings_callback() {
