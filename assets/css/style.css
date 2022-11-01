@@ -1,0 +1,67 @@
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400&display=swap');
+
+body {
+    font-family: 'Ubuntu', sans-serif;
+}
+
+.query {
+    margin: 20px 0;
+}
+.container {
+    display: flex;
+    justify-content: space-between;
+}
+.anime_body, .user_content {
+    margin-top: 10px;
+    display: flex;
+    width: 80em;
+    flex-wrap: nowrap;
+}
+.anime_body p , .user_content p {
+    font-size: 15px;
+}
+.img_container {
+    margin-right: 5em;
+}
+.img_container img {
+    max-width: max-content;
+}
+.trailer_container {
+    margin-right: 1em;
+}
+@media only screen and (max-width: 600px) {
+    .container {
+        display: block;
+    }
+    .anime_body {
+        display: block;
+        width: fit-content;
+    }
+    .img_container {
+        display: flex;
+        justify-content: center;
+    }
+    .trailer_container {
+        display: flex;
+        justify-content: center;
+    }
+}
+.customHr {
+    width: 95%;
+    font-size: 1px;
+    color: rgba(0, 0, 0, 0);
+    line-height: 1px;
+
+    background-color: grey;
+    margin-top: -6px;
+    margin-bottom: 10px;
+}
+.allgenres p span {
+    opacity: 0.7;
+}
+.statistics {
+    display: flex;
+}
+.statistics div {
+    margin-right: 15px;
+}
